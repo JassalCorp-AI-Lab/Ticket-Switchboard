@@ -147,9 +147,12 @@ project/
 └── preview/            clickable UI mock, no AWS needed
 ```
 
-[`terraform/README.md`](terraform/README.md) is the deep dive: every input
-variable, how the modules fit together, where this departs from the original
-lab guide, and troubleshooting.
+Two companion docs:
+
+- [`terraform/README.md`](terraform/README.md) — every input variable, how the
+  modules fit together, model selection, and troubleshooting.
+- [`docs/manual-setup.md`](docs/manual-setup.md) — build the same architecture
+  by hand in the AWS Console, if you want to learn what Terraform is doing.
 
 ## Tests
 

@@ -1,6 +1,11 @@
 # Docs
 
-`architecture.html` — the system architecture diagram. Open it directly in a
+- `architecture.html` / `architecture.svg` — the architecture diagram.
+- `manual-setup.md` — build the stack by hand in the AWS Console.
+
+## The diagram
+
+`architecture.html` is the system architecture diagram. Open it directly in a
 browser; it is a single self-contained file with inline SVG, so there are no
 images, fonts or scripts to load.
 
