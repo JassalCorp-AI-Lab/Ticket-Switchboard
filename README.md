@@ -32,6 +32,7 @@ Scored with [`docs/project-metrics.md`](docs/project-metrics.md).
 - [Prerequisites](#prerequisites)
 - [Getting started](#getting-started)
 - [After deployment](#after-deployment)
+- [Proof of a working deployment](#proof-of-a-working-deployment)
 - [Project structure](#project-structure)
 - [Tests](#tests)
 - [Clean up](#clean-up)
@@ -169,6 +170,22 @@ Two things still need a human — `terraform output next_steps` repeats them:
 
 Then submit something like *"VPN keeps disconnecting every 10 minutes"* and
 watch it route to the Ops team.
+
+## Proof of a working deployment
+
+Captured from a live deployment — the full path from page load to the alert
+landing in an inbox.
+
+| | |
+|---|---|
+| <img src="preview/ui-screenshot-10.png" width="420"><br>**1. Landing page.** Served from CloudFront over HTTPS, signed out. | <img src="preview/ui-screenshot-20.png" width="420"><br>**2. Cognito managed login.** The hosted sign-in page on the pool's own domain. |
+| <img src="preview/ui-screenshot-30.png" width="420"><br>**3. Submit a ticket.** Signed in as `testemployee`; the header shows the `it-staff` group from the token. | <img src="preview/ui-screenshot-40.png" width="420"><br>**4. Classified.** Bedrock returned Critical / Prod; the ticket was stored and the team notified. |
+| <img src="preview/ui-screenshot-50.png" width="420"><br>**5. All tickets.** The IT-staff-only `GET /tickets` view, listing both submissions. | <img src="preview/ui-screenshot-60.png" width="420"><br>**6. The alert.** SNS email for ticket `5d64e073`, sent by the stream-driven notifier. |
+
+Routing and priority were right on both tickets — *"Production database CPU is
+pinned at 100%"* went Critical to Prod, *"CI/CD build fails after merging my
+PR"* went High to Dev. Both came back with category **Other**, though, which is
+a prompt-tuning gap rather than a wiring one.
 
 ## Project structure
 
