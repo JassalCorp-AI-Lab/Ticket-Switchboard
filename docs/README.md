@@ -1,6 +1,7 @@
 # Docs
 
 - `architecture.html` / `architecture.svg` — the architecture diagram.
+- `sequence-diagram.html` / `sequence.svg` — the call sequence, animated and static.
 - `manual-setup.md` — build the stack by hand in the AWS Console.
 
 ## The diagram

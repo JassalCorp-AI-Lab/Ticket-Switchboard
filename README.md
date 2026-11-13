@@ -54,6 +54,14 @@ The flow, end to end:
 6. The table's stream fires the notifier Lambda, which publishes to the
    assigned team's SNS topic. SNS emails the team.
 
+### Call sequence
+
+![Call sequence](docs/sequence.svg)
+
+The same flow as a timeline — what is a synchronous round trip the user waits
+on, and what fires afterwards off the DynamoDB stream. An animated version is
+at [`docs/sequence-diagram.html`](docs/sequence-diagram.html).
+
 ## Tech stack
 
 | Layer | Service | Role |

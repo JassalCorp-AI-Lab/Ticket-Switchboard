@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 627" role="img" aria-label="Sequence diagram of Ticket Switchboard: page load, Cognito sign-in, synchronous ticket submission through API Gateway, Lambda, Bedrock and DynamoDB, then event-driven notification through DynamoDB Streams, a second Lambda and SNS to the team inbox.">
+    <style>
+    .h1 { font-family: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif; font-weight: 700; font-size: 29px; letter-spacing: -0.4px; fill: #0E1B3D; }
+    .lede { font-family: "DM Sans", system-ui, sans-serif; font-weight: 400; font-size: 13.5px; fill: #52627F; }
+    .lane-n { font-family: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif; font-weight: 600; font-size: 12.5px; fill: #0E1B3D; }
+    .lane-s { font-family: "DM Sans", system-ui, sans-serif; font-weight: 400; font-size: 10px; fill: #6B7A96; }
+    .phase { font-family: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif; font-weight: 700; font-size: 12px; fill: #0E1B3D; letter-spacing: 0.3px; }
+    .msg-t { font-family: "DM Sans", system-ui, sans-serif; font-weight: 500; font-size: 10.5px; fill: #1B2B4D; }
+    .msg-r { font-family: "DM Sans", system-ui, sans-serif; font-weight: 400; font-size: 10.5px; fill: #6B7A96; }
+    .msg-a { font-family: "DM Sans", system-ui, sans-serif; font-weight: 500; font-size: 10.5px; fill: #9A5A00; }
+    .foot { font-family: "DM Sans", system-ui, sans-serif; font-style: italic; font-size: 11.5px; fill: #52627F; }
+    .chip { font-family: "DM Sans", system-ui, sans-serif; font-weight: 600; font-size: 10px; }
+  </style>
+  <defs>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#0E1B3D" opacity="0.09"/>
+    </pattern>
+    <marker id="mDark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9 z" fill="#1B2B4D"/>
+    </marker>
+    <marker id="mLight" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9 z" fill="#8A97B0"/>
+    </marker>
+    <marker id="mAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9 z" fill="#E08A00"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="627" fill="#E9EEF5"/>
+  <rect width="1200" height="627" fill="url(#dots)"/>
+
+  <text class="h1" x="48" y="42">Ticket Switchboard &#8212; what actually calls what</text>
+  <text class="lede" x="48" y="64">Solid = request &#183; dashed = the reply coming back &#183; amber = fires later, after the user already has their answer</text>
+
+  <!-- ============ lifelines ============ -->
+  <g stroke="#0E1B3D" stroke-opacity="0.22" stroke-width="1.5" stroke-dasharray="4 6">
+    <line x1="84"   y1="124" x2="84"   y2="574"/>
+    <line x1="198"  y1="124" x2="198"  y2="574"/>
+    <line x1="312"  y1="124" x2="312"  y2="574"/>
+    <line x1="426"  y1="124" x2="426"  y2="574"/>
+    <line x1="540"  y1="124" x2="540"  y2="574"/>
+    <line x1="654"  y1="124" x2="654"  y2="574"/>
+    <line x1="768"  y1="124" x2="768"  y2="574"/>
+    <line x1="882"  y1="124" x2="882"  y2="574"/>
+    <line x1="996"  y1="124" x2="996"  y2="574"/>
+    <line x1="1110" y1="124" x2="1110" y2="574"/>
+  </g>
+
+  <!-- ============ lane headers ============ -->
+  <g>
+    <rect x="34"   y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#0E1B3D" stroke-width="2"/>
+    <text class="lane-n" x="84" y="101" text-anchor="middle">Browser</text>
+    <text class="lane-s" x="84" y="114" text-anchor="middle">the employee</text>
+
+    <rect x="148"  y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#8C4FFF" stroke-width="2"/>
+    <text class="lane-n" x="198" y="101" text-anchor="middle">CloudFront</text>
+    <text class="lane-s" x="198" y="114" text-anchor="middle">+ S3 origin</text>
+
+    <rect x="262"  y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#DD344C" stroke-width="2"/>
+    <text class="lane-n" x="312" y="101" text-anchor="middle">Cognito</text>
+    <text class="lane-s" x="312" y="114" text-anchor="middle">user pool</text>
+
+    <rect x="376"  y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#E7157B" stroke-width="2"/>
+    <text class="lane-n" x="426" y="101" text-anchor="middle">API Gateway</text>
+    <text class="lane-s" x="426" y="114" text-anchor="middle">REST /tickets</text>
+
+    <rect x="490"  y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#ED7100" stroke-width="2"/>
+    <text class="lane-n" x="540" y="101" text-anchor="middle">Lambda</text>
+    <text class="lane-s" x="540" y="114" text-anchor="middle">handler</text>
+
+    <rect x="604"  y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#01A88D" stroke-width="2"/>
+    <text class="lane-n" x="654" y="101" text-anchor="middle">Bedrock</text>
+    <text class="lane-s" x="654" y="114" text-anchor="middle">Ministral 3 8B</text>
+
+    <rect x="718"  y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#C925D1" stroke-width="2"/>
+    <text class="lane-n" x="768" y="101" text-anchor="middle">DynamoDB</text>
+    <text class="lane-s" x="768" y="114" text-anchor="middle">tickets table</text>
+
+    <rect x="832"  y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#ED7100" stroke-width="2"/>
+    <text class="lane-n" x="882" y="101" text-anchor="middle">Lambda</text>
+    <text class="lane-s" x="882" y="114" text-anchor="middle">notifier</text>
+
+    <rect x="946"  y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#E7157B" stroke-width="2"/>
+    <text class="lane-n" x="996" y="101" text-anchor="middle">SNS</text>
+    <text class="lane-s" x="996" y="114" text-anchor="middle">team topic</text>
+
+    <rect x="1060" y="84" width="100" height="36" rx="10" fill="#FFFFFF" stroke="#0E1B3D" stroke-width="2"/>
+    <text class="lane-n" x="1110" y="101" text-anchor="middle">Team inbox</text>
+    <text class="lane-s" x="1110" y="114" text-anchor="middle">email</text>
+  </g>
+
+  <!-- ============ phase A ============ -->
+  <g class="msg" data-t="0">
+    <line x1="40" y1="148" x2="1160" y2="148" stroke="#0E1B3D" stroke-opacity="0.12" stroke-width="1.5"/>
+    <rect x="44" y="139" width="134" height="18" fill="#E9EEF5"/>
+    <text class="phase" x="50" y="152">1 &#183; LOAD THE PAGE</text>
+  </g>
+  <g class="msg" data-t="0.2">
+    <rect x="96" y="160" width="92" height="13" fill="#E9EEF5"/>
+    <text class="msg-t" x="141" y="170" text-anchor="middle">GET /</text>
+    <line x1="84" y1="176" x2="198" y2="176" stroke="#1B2B4D" stroke-width="1.8" marker-end="url(#mDark)"/>
+  </g>
+  <g class="msg" data-t="0.5">
+    <rect x="46" y="182" width="190" height="13" fill="#E9EEF5"/>
+    <text class="msg-r" x="141" y="192" text-anchor="middle">index.html &#8212; public, no token needed</text>
+    <line x1="198" y1="198" x2="84" y2="198" stroke="#8A97B0" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#mLight)"/>
+  </g>
+
+  <!-- ============ phase B ============ -->
+  <g class="msg" data-t="0.8">
+    <line x1="40" y1="222" x2="1160" y2="222" stroke="#0E1B3D" stroke-opacity="0.12" stroke-width="1.5"/>
+    <rect x="44" y="213" width="96" height="18" fill="#E9EEF5"/>
+    <text class="phase" x="50" y="226">2 &#183; SIGN IN</text>
+  </g>
+  <g class="msg" data-t="1.0">
+    <rect x="124" y="234" width="148" height="13" fill="#E9EEF5"/>
+    <text class="msg-t" x="198" y="244" text-anchor="middle">redirect to the managed login</text>
+    <line x1="84" y1="250" x2="312" y2="250" stroke="#1B2B4D" stroke-width="1.8" marker-end="url(#mDark)"/>
+  </g>
+  <g class="msg" data-t="1.3">
+    <rect x="112" y="256" width="172" height="13" fill="#E9EEF5"/>
+    <text class="msg-r" x="198" y="266" text-anchor="middle">?code= &#8594; exchanged for a token</text>
+    <line x1="312" y1="272" x2="84" y2="272" stroke="#8A97B0" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#mLight)"/>
+    <rect x="172" y="264" width="52" height="17" rx="5" fill="#FFB020" stroke="#0E1B3D" stroke-width="1.5"/>
+    <text class="chip" x="198" y="276" text-anchor="middle" fill="#0E1B3D">ID JWT</text>
+  </g>
+
+  <!-- ============ phase C ============ -->
+  <g class="msg" data-t="1.6">
+    <line x1="40" y1="296" x2="1160" y2="296" stroke="#0E1B3D" stroke-opacity="0.12" stroke-width="1.5"/>
+    <rect x="44" y="287" width="292" height="18" fill="#E9EEF5"/>
+    <text class="phase" x="50" y="300">3 &#183; SUBMIT A TICKET &#8212; ONE SYNCHRONOUS ROUND TRIP</text>
+  </g>
+  <g class="msg" data-t="1.8">
+    <rect x="160" y="308" width="190" height="13" fill="#E9EEF5"/>
+    <text class="msg-t" x="255" y="318" text-anchor="middle">POST /tickets &#183; Authorization: JWT</text>
+    <line x1="84" y1="324" x2="426" y2="324" stroke="#1B2B4D" stroke-width="1.8" marker-end="url(#mDark)"/>
+  </g>
+  <g class="msg" data-t="2.1">
+    <path d="M426 340 H464 V352 H430" fill="none" stroke="#1B2B4D" stroke-width="1.8" marker-end="url(#mDark)"/>
+    <rect x="472" y="339" width="196" height="13" fill="#E9EEF5"/>
+    <text class="msg-t" x="472" y="349">the Cognito authorizer checks the JWT</text>
+  </g>
+  <g class="msg" data-t="2.4">
+    <rect x="448" y="360" width="84" height="13" fill="#E9EEF5"/>
+    <text class="msg-t" x="483" y="370" text-anchor="middle">proxy event</text>
+    <line x1="426" y1="376" x2="540" y2="376" stroke="#1B2B4D" stroke-width="1.8" marker-end="url(#mDark)"/>
+  </g>
+  <g class="msg" data-t="2.7">
+    <rect x="548" y="386" width="99" height="13" fill="#E9EEF5"/>
+    <text class="msg-t" x="597" y="396" text-anchor="middle">converse(messages)</text>
+    <line x1="540" y1="402" x2="654" y2="402" stroke="#1B2B4D" stroke-width="1.8" marker-end="url(#mDark)"/>
+  </g>
+  <g class="msg" data-t="3.0">
+    <rect x="512" y="412" width="170" height="13" fill="#E9EEF5"/>
+    <text class="msg-r" x="597" y="422" text-anchor="middle">JSON: category &#183; priority &#183; team</text>
+    <line x1="654" y1="428" x2="540" y2="428" stroke="#8A97B0" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#mLight)"/>
+  </g>
+  <g class="msg" data-t="3.3">
+    <rect x="596" y="438" width="116" height="13" fill="#E9EEF5"/>
+    <text class="msg-t" x="654" y="448" text-anchor="middle">put_item(ticket)</text>
+    <line x1="540" y1="454" x2="768" y2="454" stroke="#1B2B4D" stroke-width="1.8" marker-end="url(#mDark)"/>
+  </g>
+  <g class="msg" data-t="3.6">
+    <rect x="222" y="464" width="180" height="13" fill="#E9EEF5"/>
+    <text class="msg-r" x="312" y="474" text-anchor="middle">201 &#183; ticket_id + classification</text>
+    <line x1="540" y1="480" x2="84" y2="480" stroke="#8A97B0" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#mLight)"/>
+  </g>
+
+  <!-- ============ phase D ============ -->
+  <g class="msg" data-t="4.1">
+    <line x1="40" y1="504" x2="1160" y2="504" stroke="#E08A00" stroke-opacity="0.55" stroke-width="1.5" stroke-dasharray="7 5"/>
+    <rect x="44" y="495" width="330" height="18" fill="#E9EEF5"/>
+    <text class="phase" x="50" y="508" fill="#9A5A00">4 &#183; NOTIFY THE TEAM &#8212; EVENT-DRIVEN, AFTER THE REPLY</text>
+  </g>
+  <g class="msg" data-t="4.3">
+    <rect x="758" y="516" width="236" height="13" fill="#E9EEF5"/>
+    <text class="msg-a" x="825" y="526" text-anchor="middle">stream record &#183; INSERT, NEW_IMAGE</text>
+    <line x1="768" y1="532" x2="882" y2="532" stroke="#E08A00" stroke-width="1.8" marker-end="url(#mAmber)"/>
+  </g>
+  <g class="msg" data-t="4.6">
+    <rect x="808" y="538" width="263" height="13" fill="#E9EEF5"/>
+    <text class="msg-a" x="939" y="548" text-anchor="middle">publish &#8594; ticket-switchboard-ops-team</text>
+    <line x1="882" y1="554" x2="996" y2="554" stroke="#E08A00" stroke-width="1.8" marker-end="url(#mAmber)"/>
+  </g>
+  <g class="msg" data-t="4.9">
+    <rect x="982" y="560" width="146" height="13" fill="#E9EEF5"/>
+    <text class="msg-a" x="1053" y="570" text-anchor="middle">SNS sends the email</text>
+    <line x1="996" y1="576" x2="1110" y2="576" stroke="#E08A00" stroke-width="1.8" marker-end="url(#mAmber)"/>
+  </g>
+  <g class="msg" data-t="5.2">
+    <rect x="1024" y="584" width="166" height="30" rx="8" fill="#FFFFFF" stroke="#0E1B3D" stroke-width="1.5"/>
+    <rect x="1032" y="591" width="46" height="16" rx="8" fill="#FDE3E6"/>
+    <text class="chip" x="1055" y="602" text-anchor="middle" fill="#A31F34">High</text>
+    <text class="chip" x="1086" y="602" fill="#0E1B3D">Network &#183; Ops</text>
+  </g>
+
+  <text class="foot" x="48" y="600">Bedrock only answers &#8212; the handler Lambda is what writes to DynamoDB.</text>
+  <text class="foot" x="48" y="616">SES verifies that mailbox once at setup; it is not in the delivery path.</text>
+</svg>
