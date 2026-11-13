@@ -1,0 +1,37 @@
+# Copy to terraform.tfvars and edit, then run `terraform init && terraform apply`.
+
+# ---- Required --------------------------------------------------------------
+
+# An inbox you can open. Used for the SES identity, all five SNS team
+# subscriptions, and the Cognito test user. You will confirm links sent here.
+notification_email = "you@example.com"
+
+# Temporary password for the Cognito test user.
+# 8+ chars with upper case, lower case, a number and a symbol.
+# Prefer `export TF_VAR_test_user_password=...` over committing this file.
+test_user_password = "ChangeMe#2026"
+
+# ---- Optional (defaults shown) ---------------------------------------------
+
+# aws_region             = "us-east-1"
+# project_name           = "ticket-switchboard"
+# app_display_name       = "Ticket Switchboard"
+# bedrock_model_id       = "mistral.ministral-3-8b-instruct"   # any Converse model - see README section 9
+# bedrock_max_tokens     = 500
+# bedrock_temperature    = 0.1
+# api_stage_name         = "prod"
+# test_user_name         = "testemployee"
+# test_user_group        = "it-staff"   # it-staff can also list all tickets
+# create_test_user       = true
+# verify_ses_identity    = true
+# log_retention_days     = 7
+# cloudfront_price_class = "PriceClass_100"
+
+# Leave empty to auto-generate globally unique names.
+# bucket_name           = ""
+# cognito_domain_prefix = ""
+
+# tags = {
+#   Project   = "Ticket-Switchboard"
+#   ManagedBy = "Terraform"
+# }
