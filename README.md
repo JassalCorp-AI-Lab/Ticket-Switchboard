@@ -12,12 +12,23 @@ and the right team gets an email — in about a second, with no servers to run.
 The whole stack is defined in Terraform. There is nothing to click in the
 console to stand it up.
 
+| Metric | Value | Why |
+|---|---|---|
+| **Difficulty** | Intermediate (3/5) | No hard algorithms — the challenge is wiring 9 services, their IAM, and two dependency traps Terraform makes explicit |
+| **Depth** | Broad, shallow (2/5) | Touches a lot; each piece is the happy path. Input validation, model-output fallbacks and 26 tests lift the handler above the rest |
+| **Maturity** | Dev / demo | Reproducible deploy, scoped IAM, tested — but no alarms, DLQ, CI or remote state, and the bucket is public by design |
+| **Scope** | 9 AWS services · 2 Lambdas · 6 modules · ~56 resources · ~1.3k lines Terraform + 230 Python | An integration project, not an algorithms one |
+| **Cost & build time** | <$0.50 · ~8 min to deploy | Fully serverless, teardown is one command |
+
+Scored with [`docs/project-metrics.md`](docs/project-metrics.md).
+
 ## Contents
 
 - [Business scenario](#business-scenario)
 - [Architecture](#architecture)
 - [Tech stack](#tech-stack)
 - [Key features](#key-features)
+- [Hardening backlog](#hardening-backlog)
 - [Prerequisites](#prerequisites)
 - [Getting started](#getting-started)
 - [After deployment](#after-deployment)
@@ -90,6 +101,24 @@ Lambda code is Python 3.12, zipped at plan time — there is no build step.
 - **Config injected at apply time.** API, Cognito and CloudFront values are
   templated into `index.html` — no hand-edited endpoints.
 - **Tested offline.** 25 handler tests that need no AWS account.
+
+## Hardening backlog
+
+What "Dev / demo" above is standing in for. None of these are needed for a
+demo; all of them would be needed to run it for real.
+
+| Gap | Why it matters |
+|---|---|
+| No DLQ on either Lambda | A poison record on the stream retries until it expires, then is lost silently |
+| Notifier is not idempotent | Stream delivery is at-least-once, so a retry can send a duplicate alert |
+| No alarms or dashboards | Nothing reports a rising Bedrock error rate or a stuck iterator |
+| Local Terraform state | No locking — concurrent applies would corrupt it. Needs S3 + DynamoDB |
+| No CI | `fmt`, `validate` and the handler tests run only when someone remembers |
+| Public S3 bucket | Required by the S3 *website* endpoint origin; CloudFront OAC with a REST origin removes it |
+| No API throttling or WAF | The endpoint is open to the internet behind auth, with no rate limit |
+| Single region, no DR | Fine for a lab; an outage takes the whole thing down |
+| PITR disabled on the table | Deliberate for cost — a real ticket store wants it on |
+| Test-user password in tfvars | Should come from Secrets Manager, not a variable |
 
 ## Prerequisites
 
