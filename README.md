@@ -216,3 +216,11 @@ Roughly **$0.00–$0.50** for a 2–3 hour session, almost all of it Bedrock
 inference at a fraction of a cent per ticket. Everything else sits inside the
 free tier. Run `terraform destroy` when you are done: a CloudFront distribution
 left enabled accrues charges over time.
+
+---
+
+**On this documentation.** Written with [Claude Code](https://claude.com/claude-code)
+— the git log records which commits. The Terraform validates and the handler
+has 26 offline tests; AWS service behaviour cited here was checked against AWS
+documentation in November 2026. The prose, diagrams and scorecard may still
+contain errors, so verify anything you depend on.
